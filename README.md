@@ -29,4 +29,5 @@ Pythonを使用する場合は、Flaskをインストールします。
 これで完了です。
 
 **Copy Write**
+
 ©Psannetwork
