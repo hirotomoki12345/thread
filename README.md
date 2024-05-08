@@ -1,8 +1,9 @@
-PsanThread
-はじめに
+**PsanThread**
+
+**はじめに**
 PsanThreadをホストすると、誰でもオープンスレッドを公開できます。
 
-使用方法
+**使用方法**
 まず、以下のリポジトリをクローンします。
 
 ```git clone https://github.com/hirotomoki12345/thread.git```
@@ -21,9 +22,5 @@ Pythonを使用する場合は、Flaskをインストールします。
 ```python server.py```
 これで完了です。
 
-ライセンス
-[ライセンス情報を記入]
-
-注意事項
-[注意事項を記入]
-
+**Copy Write**
+©Psannetwork
