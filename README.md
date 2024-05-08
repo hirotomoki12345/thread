@@ -17,6 +17,7 @@ Node.jsを使用する場合は、Expressをインストールします。
 サーバーを起動します。
 
 ```node server.js```
+
 Pythonを使用する場合は、Flaskをインストールします。
 
 ```pip install flask```
