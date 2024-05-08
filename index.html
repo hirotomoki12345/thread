@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat</title>
+<style>
+    body, div, p, input, button {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    .chatcode {
+        display: flex;
+        margin-bottom: 10px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: white;
+        padding: 10px;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .chatcode input[type="text"] {
+        flex: 1;
+        padding: 5px;
+        margin-right: 5px;
+    }
+
+    .chatcode button {
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .chatcode button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    /* Chat List */
+    .chatlist {
+        margin: 20px auto; 
+        max-width: 600px; 
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .chat-item {
+        padding: 5px;
+        margin-bottom: 5px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+        .chatcode {
+            flex-wrap: wrap;
+        }
+
+        .chatcode input[type="text"] {
+            flex: 1 0 100%;
+            margin-bottom: 5px;
+        }
+
+        .chatcode button {
+            flex: 1 0 100%;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="chatlist"></div>
+    <div class="chatsend">
+        <div class="chatcode">
+            <input type="text" name="text" placeholder="Text" onkeydown="if(event.keyCode==13){sendData(); return false;}">
+            <input type="text" name="name" placeholder="Name">
+            <button onclick="sendData()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const idValue = urlParams.get('id');
+        var sendButton = document.querySelector('.chatcode button');
+        var nameInput = document.querySelector('.chatcode input[name="name"]');
+        var textInput = document.querySelector('.chatcode input[name="text"]');
+
+        function Getchat() {
+            var gasUrl = 'https://script.google.com/macros/s/AKfycbwfPglE22DreTD3X6s69WdOV3mh3C71a9DSyZLuR3YAz74ADc3b8EyCCJDfc1OogeUt/exec';
+            var url = gasUrl + '?id=' + idValue; 
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch chat data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    displayChat(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function displayChat(data) {
+            var chatDiv = document.querySelector('.chatlist');
+            chatDiv.innerHTML = '';
+            data.forEach(chat => {
+                var date = new Date(chat['時間']);
+                var formattedDate = date.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' });
+                var chatItem = `
+                    <div class="chat-item">
+                        <p>${formattedDate} - ${chat['名前']}: ${chat['テキスト']}</p>
+                    </div>
+                `;
+                chatDiv.insertAdjacentHTML('beforeend', chatItem);
+            });
+        }
+
+        function sendData() {
+            sendButton.disabled = true;
+            var textValue = textInput.value;
+            var nameValue = nameInput.value;
+            var url = 'https://script.google.com/macros/s/AKfycbz8aVrqSX4L6aAE8NP2Q96sSRAISbo16e4e6jNo4wYyzVLbm2t4HpEdV8h7mRhnJW7IEA/exec' + '?id=' + encodeURIComponent(idValue) + '&text=' + encodeURIComponent(textValue) + '&name=' + encodeURIComponent(nameValue);
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to send message');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log(data);
+                    var successMsg = document.createElement('p');
+                    successMsg.textContent = data;
+                    document.querySelector('.chatcode').appendChild(successMsg);
+                    setTimeout(() => {
+                        successMsg.remove();
+                        textInput.value = ''; 
+                    }, 2000);
+                    Getchat();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                })
+                .finally(() => {
+                    sendButton.disabled = false;
+                });
+        }
+
+        setInterval(function() {
+            Getchat();
+        }, 10000);
+
+        Getchat();
+    </script>
+</body>
+</html>
