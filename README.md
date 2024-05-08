@@ -29,6 +29,11 @@ Pythonを使用する場合は、Flaskをインストールします。
 ```python server.py```
 これで完了です。
 
+あとは、
+
+http://localhost:3000/login.html
+
+にアクセスすれば使えます。
 **Copy Write**
 
 ©Psannetwork
